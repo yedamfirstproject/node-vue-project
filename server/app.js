@@ -1,0 +1,27 @@
+require("dotenv").config({ path: "./database/dbConfig.env" });
+
+const express = require("express");
+const cors = require("cors");
+
+const app = express();
+const port = 3000;
+
+//미들웨어
+app.use(cors());
+
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
+// 테스트 api
+app.get(`/`, (req, res) => {
+  res.send(`OK`);
+});
+
+// 서버실행
+app.listen(port, () => {
+  console.log(`서버 실행 http://localhost:${port}`);
+});
+
+//기능별 라우터모듈
+const userRouter = require("./routers/user/user_router");
+app.use("/api/user", userRouter);
