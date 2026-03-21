@@ -13,4 +13,18 @@ SELECT J_ID,
 FROM Survey_Tbl
 ORDER BY J_ID`;
 
-module.exports = { selectSurveyAll };
+//조사지 건별조회 <김민지, 조사지 건별조회 쿼리 작성>
+const selectSurveyById = `
+SELECT J_ID,
+       Ver_Id,
+       G_UserId,
+       support_id,
+       result,
+       reason,
+       created_at,
+       updated_at
+FROM Survey_Tbl
+WHERE J_ID = ?
+`;
+
+module.exports = { selectSurveyAll, selectSurveyById };

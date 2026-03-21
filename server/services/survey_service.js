@@ -8,4 +8,10 @@ const findAll = async () => {
   return list;
 };
 
-module.exports = { findAll };
+//조사지 건별조회 <김민지, mapper에 있는 함수 가져와서 라우터에 결과 전달>
+const fineInfoByNo = async (surveyNo) => {
+  let detail = await surveyMapper.selectSurveyById(surveyNo);
+  return detail;
+};
+
+module.exports = { findAll, fineInfoByNo };
