@@ -56,36 +56,73 @@
                           <span
                             v-if="sub.description"
                             class="ms-2 font-weight-normal text-secondary text-lowercase"
-                            >{{ sub.description }}</span
                           >
+                            {{ sub.description }}
+                          </span>
                         </td>
                       </tr>
-                      <tr v-for="(q, qIdx) in sub.questions" :key="qIdx">
-                        <td class="text-center text-xs text-secondary ps-4">
-                          {{ qIdx + 1 }}
-                        </td>
-                        <td class="text-sm text-dark text-wrap align-top">
-                          {{ q }}
-                        </td>
-                        <td class="text-center">
-                          <input
-                            type="radio"
-                            :name="`q_${sIdx}_${subIdx}_${qIdx}`"
-                            value="예"
-                            v-model="answers[sIdx][subIdx][qIdx]"
-                            class="form-check-input custom-radio"
-                          />
-                        </td>
-                        <td class="text-center">
-                          <input
-                            type="radio"
-                            :name="`q_${sIdx}_${subIdx}_${qIdx}`"
-                            value="아니오"
-                            v-model="answers[sIdx][subIdx][qIdx]"
-                            class="form-check-input custom-radio"
-                          />
-                        </td>
-                      </tr>
+                      <template v-for="(q, qIdx) in sub.questions" :key="qIdx">
+                        <tr>
+                          <td class="text-center text-xs text-secondary ps-4">
+                            {{ qIdx + 1 }}
+                          </td>
+                          <td class="text-sm text-dark text-wrap align-top">
+                            <div class="mb-1">
+                              {{ typeof q === "string" ? q : q.text }}
+                            </div>
+
+                            <div
+                              v-if="q.hasExtraInput"
+                              class="mt-2 p-0 border-0"
+                            >
+                              <div class="col-12 mb-2">
+                                <label
+                                  class="text-xs font-weight-bold text-dark mb-1 d-block"
+                                  >구체적 사유</label
+                                >
+                                <input
+                                  type="text"
+                                  class="form-control form-control-sm border"
+                                  style="max-width: 400px"
+                                  placeholder="사유를 입력해주세요"
+                                  v-model="extraInputs.reason"
+                                />
+                              </div>
+                              <div class="col-12 mb-2">
+                                <label
+                                  class="text-xs font-weight-bold text-dark mb-1 d-block"
+                                  >필요시기</label
+                                >
+                                <input
+                                  type="text"
+                                  class="form-control form-control-sm border"
+                                  style="max-width: 400px"
+                                  placeholder="시기를 입력해주세요"
+                                  v-model="extraInputs.date"
+                                />
+                              </div>
+                            </div>
+                          </td>
+                          <td class="text-center">
+                            <input
+                              type="radio"
+                              :name="`q_${sIdx}_${subIdx}_${qIdx}`"
+                              value="예"
+                              v-model="answers[sIdx][subIdx][qIdx]"
+                              class="form-check-input custom-radio"
+                            />
+                          </td>
+                          <td class="text-center">
+                            <input
+                              type="radio"
+                              :name="`q_${sIdx}_${subIdx}_${qIdx}`"
+                              value="아니오"
+                              v-model="answers[sIdx][subIdx][qIdx]"
+                              class="form-check-input custom-radio"
+                            />
+                          </td>
+                        </tr>
+                      </template>
                     </template>
                   </tbody>
                 </table>
@@ -129,11 +166,8 @@
 
           <div class="card-body modal-scrollable p-4">
             <template v-for="(section, sIdx) in allSections" :key="'m' + sIdx">
-              <div class="mb-3 mt-2">
-                <span class="text-success me-2">●</span>
-                <span class="text-sm font-weight-bolder">{{
-                  section.title
-                }}</span>
+              <div class="mb-3 mt-2 font-weight-bolder text-sm">
+                <span class="text-success me-2">●</span> {{ section.title }}
               </div>
               <table class="table align-items-center mb-4 border">
                 <thead class="bg-light">
@@ -162,20 +196,50 @@
                       </td>
                     </tr>
                     <tr v-for="(q, qIdx) in sub.questions" :key="'mq' + qIdx">
-                      <td class="ps-3 text-xs text-wrap">
-                        {{ qIdx + 1 }}. {{ q }}
+                      <td class="ps-3 text-xs text-wrap align-top">
+                        <div class="mb-1">
+                          {{ qIdx + 1 }}.
+                          {{ typeof q === "string" ? q : q.text }}
+                        </div>
+
+                        <div
+                          v-if="
+                            q.hasExtraInput &&
+                            answers[sIdx][subIdx][qIdx] === '예'
+                          "
+                          class="mt-2 p-2 bg-gray-100 border-radius-md"
+                        >
+                          <div class="mb-2">
+                            <span
+                              class="text-xxs font-weight-bold text-info d-block mb-1"
+                              >[구체적 사유]</span
+                            >
+                            <div class="p-2 bg-white border border-radius-sm">
+                              {{ extraInputs.reason || "(입력 안 함)" }}
+                            </div>
+                          </div>
+                          <div>
+                            <span
+                              class="text-xxs font-weight-bold text-info d-block mb-1"
+                              >[필요시기]</span
+                            >
+                            <div class="p-2 bg-white border border-radius-sm">
+                              {{ extraInputs.date || "(입력 안 함)" }}
+                            </div>
+                          </div>
+                        </div>
                       </td>
-                      <td class="text-center">
+                      <td class="text-center align-top">
                         <span
                           v-if="answers[sIdx][subIdx][qIdx] === '예'"
-                          class="text-success"
+                          class="text-success font-weight-bolder"
                           >✔</span
                         >
                       </td>
-                      <td class="text-center">
+                      <td class="text-center align-top">
                         <span
                           v-if="answers[sIdx][subIdx][qIdx] === '아니오'"
-                          class="text-danger"
+                          class="text-danger font-weight-bolder"
                           >✔</span
                         >
                       </td>
@@ -212,7 +276,6 @@
 <script setup>
 import { ref, reactive } from "vue";
 
-// 데이터 구조화 (반복문을 위해 통합 관리)
 const allSections = [
   {
     title: "지원사유",
@@ -241,7 +304,10 @@ const allSections = [
         questions: [
           "앞으로의 생활 또는 서비스 이용을 위한 장기적인 계획이 필요하다.",
           "현재 이용 가능한 지원 서비스나 제도에 대한 안내 및 상담이 필요하다.",
-          "향후 생활 지원을 위한 개인 맞춤형 계획 수립이 필요하다.",
+          {
+            text: "향후 생활 지원을 위한 개인 맞춤형 계획 수립이 필요하다.",
+            hasExtraInput: true,
+          },
         ],
       },
     ],
@@ -274,7 +340,7 @@ const allSections = [
         questions: [
           "현재 생활비 또는 기본적인 생계 유지에 어려움이 있다.",
           "안정적인 주거 환경 유지에 어려움이 있다.",
-          "생활을 유지하기 위해 추가적인 경계적 지원이 필요하다.",
+          "생활을 유지하기 위해 추가적인 경제적 지원이 필요하다.",
         ],
       },
       {
@@ -288,18 +354,22 @@ const allSections = [
   },
 ];
 
-// 답변 상태 관리 (초기값 빈 문자열)
+// 정적 배열로 답변 구조 생성 (초기값 "")
 const answers = reactive(
   allSections.map((s) => s.subs.map((sub) => sub.questions.map(() => ""))),
 );
-const extraRequest = ref("");
 
-// 모달 상태 관리
+const extraInputs = reactive({
+  reason: "",
+  date: "",
+});
+
+const extraRequest = ref("");
 const isModalOpen = ref(false);
 
 const openModal = () => {
   isModalOpen.value = true;
-  document.body.style.overflow = "hidden"; // 스크롤 방지
+  document.body.style.overflow = "hidden";
 };
 
 const closeModal = () => {
@@ -314,13 +384,11 @@ const handleRegister = () => {
 </script>
 
 <style scoped>
-/* 기존 스타일 */
 .custom-radio {
   cursor: pointer;
   width: 1.2rem;
   height: 1.2rem;
   border: 1px solid #d2d6da;
-  border-radius: 4px !important;
 }
 .custom-radio:checked {
   background-color: #2dce89;
@@ -328,20 +396,10 @@ const handleRegister = () => {
 }
 .table td {
   padding: 0.75rem 0.5rem;
-  vertical-align: middle;
 }
 .bg-gray-100 {
   background-color: #f8f9fa !important;
 }
-.date-display {
-  min-width: 120px;
-  text-align: center;
-}
-.text-wrap {
-  white-space: normal !important;
-}
-
-/* 모달 스타일 */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -353,9 +411,8 @@ const handleRegister = () => {
   justify-content: center;
   align-items: flex-start;
   z-index: 1050;
-  overflow-y: auto; /* 모달 자체가 길 경우 스크롤 */
+  overflow-y: auto;
 }
-
 .modal-content-wrapper {
   width: 90%;
   max-width: 800px;
@@ -363,13 +420,16 @@ const handleRegister = () => {
   border-radius: 1rem;
   margin: 2rem 0;
 }
-
 .modal-scrollable {
   max-height: 70vh;
   overflow-y: auto;
 }
-
-/* 애니메이션 */
+.text-wrap {
+  white-space: normal !important;
+}
+.border-radius-sm {
+  border-radius: 4px;
+}
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s;
@@ -377,12 +437,5 @@ const handleRegister = () => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-
-.text-xxs {
-  font-size: 0.65rem;
-}
-.min-vh-10 {
-  min-height: 100px;
 }
 </style>
