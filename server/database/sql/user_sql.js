@@ -10,8 +10,28 @@ VALUES(?,?,?,?,?,?,?,?,?) `;
 const insertInstiUser = `
 INSERT INTO InstiUser_Tbl (name, id, password, tel)
 VALUES(?,?,?,?)`;
+
+//지원대상자마지막PK조회 Query
+const lastSupportId = 
+`
+SELECT support_id
+FROM Support_Tbl
+ORDER BY support_id DESC
+LIMIT 1
+`;
+
+//**일반이용자 마이페이지 Query
+//***일반이용자 지원대상자 등록 Query
+const supportAddSql = 
+`
+INSERT INTO Support_Tbl(support_id, G_UserId, I_userId1, I_userId2, name, born, gender, relation, zipCode, address, major, middle,sub)
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
+`;
+
 module.exports = {
   testSelect,
   insertUser,
   insertInstiUser,
+  supportAddSql,
+  lastSupportId,
 };

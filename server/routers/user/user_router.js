@@ -22,4 +22,10 @@ router.post(`/instiUsers`, async (req, res) => {
   let result = await userService.createInstiUser(target);
   res.send(result);
 });
+router.post(`/support/add`, async (req, res) => {
+  let body = req.body;
+  let result = await userService.supportAdd(body);
+  res.send(result);
+});
+
 module.exports = router;
