@@ -24,7 +24,8 @@ LEFT JOIN PlanResult_Tbl pr
 ON su.support_id = sv.support_id
 AND sv.J_ID = pl.J_ID
 AND pl.supportPlan_id = pr.supportPlan_id
-WHERE gu.G_UserId = ? AND iu.roll IN ('a003');
+WHERE gu.G_UserId = ? AND iu.roll IN ('a003')
+ORDER BY sv.created_at DESC;
 `;
 
 module.exports = {

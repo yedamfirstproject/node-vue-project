@@ -84,9 +84,9 @@
               </td>
 
               <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">{{
-                  item.applyDate
-                }}</span>
+                <span class="text-secondary text-xs font-weight-bold">
+                  {{ item.registerDate }}
+                </span>
               </td>
 
               <td class="align-middle text-center">
@@ -102,9 +102,9 @@
               </td>
 
               <td class="align-middle text-center text-sm">
-                <span class="badge badge-sm bg-gradient-success">{{
-                  item.priorityName
-                }}</span>
+                <span class="badge badge-sm bg-gradient-success">
+                  {{ item.priorityCode }}
+                </span>
               </td>
 
               <td class="align-middle text-center text-xs">
