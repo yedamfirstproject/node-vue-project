@@ -1,3 +1,4 @@
+<!-- AuthorsMainTable.vue -->
 <template>
   <div class="card">
     <div class="card-header pb-0">
