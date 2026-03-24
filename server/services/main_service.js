@@ -27,8 +27,8 @@ const findByUserId = async (id) => {
     }
 
     item.priorityCode = rankName;
-    item.hasPlan = item.planId ? true : false;
-    item.hasResult = item.resultId ? true : false;
+    item.hasPlan = item.hasPlanCount ? true : false;
+    item.hasResult = item.hasResultCount ? true : false;
 
     return item;
   });
