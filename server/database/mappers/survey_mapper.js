@@ -36,11 +36,11 @@ const insertSurvey = async (surveyInfo) => {
   try {
     conn = await pool.getConnection(); //커넥션 풀에서 사용 가능한 커넥션을 하나 가져옴(이미 만들어진 걸 재사용)
     let rows = await conn.query(surveySql.insertSurvey, surveyInfo);
-    console.log(rows);
     //surveySql에서 등록 쿼리 가져오고, 파라미터에서 등록할 값을 전달
     return rows; //rows 값을 리턴해서 돌려줌
   } catch (err) {
-    console.log(err); //콘솔에 에러 표시
+    console.log("DB 에러:", err); //콘솔에 에러 표시
+    throw err;
   } finally {
     if (conn) conn.release(); //커넥션 반환
   }
