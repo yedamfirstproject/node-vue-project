@@ -1,3 +1,4 @@
+<!-- GeneralMain.vue -->
 <script setup>
 import AuthorsTable from "./components/AuthorsMainTable.vue";
 </script>

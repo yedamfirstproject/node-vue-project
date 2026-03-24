@@ -1,3 +1,4 @@
+// main_service.js
 // 메인페이지 관련 service
 const mainMapper = require("../database/mappers/main_mapper.js");
 

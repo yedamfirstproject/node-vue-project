@@ -1,3 +1,4 @@
+// surveyList_router.js
 export default [
   {
     //일반이용자 조사지 리스트 Router
