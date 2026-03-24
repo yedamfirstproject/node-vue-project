@@ -53,7 +53,7 @@ const surveyInfo = async (payload) => {
   };
 
   try {
-    let response = await fetch(`http://localhost:8080/api/survey/user`, {
+    let response = await fetch(`http://localhost:3000/survey/user`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
