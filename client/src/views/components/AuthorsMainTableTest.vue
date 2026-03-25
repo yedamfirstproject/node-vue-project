@@ -116,7 +116,10 @@ const props = defineProps({
               </td>
 
               <td class="align-middle text-center">
-                <button class="btn btn-primary btn-sm mb-0 px-3 py-1">
+                <button
+                  class="btn btn-primary btn-sm mb-0 px-3 py-1"
+                  @click="$router.push(`/survey/detail/${item.surveyId}`)"
+                >
                   보기
                 </button>
               </td>
