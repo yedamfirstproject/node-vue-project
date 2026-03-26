@@ -1,4 +1,20 @@
-<!-- AuthorsMainTable.vue -->
+<script setup>
+import { defineProps } from "vue";
+
+// 💡 부모 컴포넌트에서 던져줄 데이터(surveyList)와 권한(userRole)을 받을 바구니 준비!
+const props = defineProps({
+  surveyList: {
+    type: Array,
+    required: true,
+    default: () => [], // 만약 데이터가 안 오면 빈 배열로 에러 방지
+  },
+  userRole: {
+    type: String,
+    required: true, // "USER", "MANAGER", "ADMIN" 중 하나가 들어올 예정
+  },
+});
+</script>
+
 <template>
   <div class="card">
     <div class="card-header pb-0">
@@ -10,303 +26,185 @@
           <thead>
             <tr>
               <th
-                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
-              >
-                번호
-              </th>
-              <th
-                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
+                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
               >
                 지원자명
               </th>
+
               <th
                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
               >
                 보호자명
               </th>
+
               <th
                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
               >
                 지원신청일
               </th>
+
               <th
                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
               >
                 조사지
               </th>
+
               <th
                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
               >
                 담당자
               </th>
+
               <th
                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
               >
                 우선순위
               </th>
+
               <th
                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
               >
                 진행상태
               </th>
+
               <th
                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
               >
                 지원계획
               </th>
+
               <th
                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
               >
                 지원결과
               </th>
-              <th class="text-secondary opacity-7"></th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div>
-                    <img
-                      src="../../assets/img/team-2.jpg"
-                      class="avatar avatar-sm me-3"
-                      alt="user1"
-                    />
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">John Michael</h6>
-                    <p class="text-xs text-secondary mb-0">
-                      john@creative-tim.com
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">Manager</p>
-                <p class="text-xs text-secondary mb-0">Organization</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <span class="badge badge-sm bg-gradient-success">Online</span>
-              </td>
+            <tr
+              v-for="(item, index) in props.surveyList"
+              :key="item.surveyId || index"
+            >
+              <!-- 지원대상자 -->
               <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold"
-                  >23/04/18</span
-                >
+                <h6 class="mb-0 text-sm">{{ item.supportName }}</h6>
               </td>
-              <td class="align-middle">
-                <a
-                  href="javascript:;"
-                  class="text-secondary font-weight-bold text-xs"
-                  data-toggle="tooltip"
-                  data-original-title="Edit user"
-                  >Edit</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div>
-                    <img
-                      src="../../assets/img/team-3.jpg"
-                      class="avatar avatar-sm me-3"
-                      alt="user2"
-                    />
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">Alexa Liras</h6>
-                    <p class="text-xs text-secondary mb-0">
-                      alexa@creative-tim.com
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">Programator</p>
-                <p class="text-xs text-secondary mb-0">Developer</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <span class="badge badge-sm bg-gradient-secondary"
-                  >Offline</span
-                >
-              </td>
+
+              <!-- 보호자 -->
               <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold"
-                  >11/01/19</span
-                >
+                <p class="text-xs font-weight-bold mb-0">
+                  {{ item.generalName }}
+                </p>
               </td>
-              <td class="align-middle">
-                <a
-                  href="javascript:;"
-                  class="text-secondary font-weight-bold text-xs"
-                  data-toggle="tooltip"
-                  data-original-title="Edit user"
-                  >Edit</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div>
-                    <img
-                      src="../../assets/img/team-4.jpg"
-                      class="avatar avatar-sm me-3"
-                      alt="user3"
-                    />
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">Laurent Perrier</h6>
-                    <p class="text-xs text-secondary mb-0">
-                      laurent@creative-tim.com
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">Executive</p>
-                <p class="text-xs text-secondary mb-0">Projects</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <span class="badge badge-sm bg-gradient-success">Online</span>
-              </td>
+
+              <!-- 등록일 -->
               <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold"
-                  >19/09/17</span
-                >
+                <span class="text-secondary text-xs font-weight-bold">{{
+                  item.registerDate
+                }}</span>
               </td>
-              <td class="align-middle">
-                <a
-                  href="javascript:;"
-                  class="text-secondary font-weight-bold text-xs"
-                  data-toggle="tooltip"
-                  data-original-title="Edit user"
-                  >Edit</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div>
-                    <img
-                      src="../../assets/img/team-3.jpg"
-                      class="avatar avatar-sm me-3"
-                      alt="user4"
-                    />
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">Michael Levi</h6>
-                    <p class="text-xs text-secondary mb-0">
-                      michael@creative-tim.com
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">Programator</p>
-                <p class="text-xs text-secondary mb-0">Developer</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <span class="badge badge-sm bg-gradient-success">Online</span>
-              </td>
+
+              <!-- 조사지 -->
               <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold"
-                  >24/12/08</span
+                <button
+                  class="btn btn-primary btn-sm mb-0 px-3 py-1"
+                  @click="$router.push(`/survey/detail/${item.surveyId}`)"
                 >
+                  보기
+                </button>
               </td>
-              <td class="align-middle">
-                <a
-                  href="javascript:;"
-                  class="text-secondary font-weight-bold text-xs"
-                  data-toggle="tooltip"
-                  data-original-title="Edit user"
-                  >Edit</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div>
-                    <img
-                      src="../../assets/img/team-2.jpg"
-                      class="avatar avatar-sm me-3"
-                      alt="user5"
-                    />
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">Richard Gran</h6>
-                    <p class="text-xs text-secondary mb-0">
-                      richard@creative-tim.com
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">Manager</p>
-                <p class="text-xs text-secondary mb-0">Executive</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <span class="badge badge-sm bg-gradient-secondary"
-                  >Offline</span
-                >
-              </td>
+
+              <!-- 담당자 -->
               <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold"
-                  >04/10/21</span
-                >
+                <p class="text-xs font-weight-bold mb-0">
+                  <button
+                    v-if="props.userRole === 'GENERAL' && !item.instiName"
+                    class="badge bg-gradient-warning border-0"
+                  >
+                    배정
+                  </button>
+                  <span v-else>{{ item.instiName || "미배정" }}</span>
+                </p>
               </td>
-              <td class="align-middle">
-                <a
-                  href="javascript:;"
-                  class="text-secondary font-weight-bold text-xs"
-                  data-toggle="tooltip"
-                  data-original-title="Edit user"
-                  >Edit</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div>
-                    <img
-                      src="../../assets/img/team-4.jpg"
-                      class="avatar avatar-sm me-3"
-                      alt="user6"
-                    />
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">Miriam Eric</h6>
-                    <p class="text-xs text-secondary mb-0">
-                      miriam@creative-tim.com
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">Programtor</p>
-                <p class="text-xs text-secondary mb-0">Developer</p>
-              </td>
+
+              <!-- 우선순위 -->
               <td class="align-middle text-center text-sm">
-                <span class="badge badge-sm bg-gradient-secondary"
-                  >Offline</span
+                <button
+                  v-if="
+                    props.userRole === 'MANAGER' && item.priorityCode === '미정'
+                  "
+                  class="btn btn-sm btn-outline-warning mb-0 px-3 py-1"
+                  @click="
+                    $router.push(`/manager/priority-request/${item.surveyId}`)
+                  "
                 >
+                  요청
+                </button>
+
+                <button
+                  v-else-if="
+                    props.userRole === 'MANAGER' && item.priorityCode === '반려'
+                  "
+                  class="btn btn-sm btn-danger mb-0 px-3 py-1"
+                  @click="
+                    $router.push(`/manager/priority-request/${item.surveyId}`)
+                  "
+                >
+                  반려
+                </button>
+
+                <span
+                  v-else
+                  class="badge badge-sm"
+                  :class="{
+                    'bg-gradient-danger':
+                      item.priorityCode === '긴급' ||
+                      item.priorityCode === '반려',
+                    'bg-gradient-success': item.priorityCode === '중점',
+                    'bg-gradient-info': item.priorityCode === '계획',
+                    'bg-gradient-secondary':
+                      item.priorityCode === '심사중' ||
+                      item.priorityCode === '미정',
+                  }"
+                >
+                  {{ item.priorityCode }}
+                </span>
               </td>
+
+              <!-- 진행상태 -->
+              <td class="align-middle text-center text-xs">
+                검토 {{ item.reviewCount }}건 <br />
+                계획 {{ item.planCount }}건 <br />
+                <span
+                  :class="{
+                    'text-danger font-weight-bold': item.rejectCount > 0,
+                  }"
+                  >반려 {{ item.rejectCount }}건</span
+                >
+                <br />
+                종료 {{ item.finishCount }}건
+              </td>
+
+              <!-- 지원계획 -->
               <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold"
-                  >14/09/20</span
+                <button
+                  class="btn btn-sm mb-0 px-3 py-1"
+                  :class="item.hasPlan ? 'btn-info' : 'btn-outline-secondary'"
+                  :disabled="!item.hasPlan"
                 >
+                  보기
+                </button>
               </td>
-              <td class="align-middle">
-                <a
-                  href="javascript:;"
-                  class="text-secondary font-weight-bold text-xs"
-                  data-toggle="tooltip"
-                  data-original-title="Edit user"
-                  >Edit</a
+
+              <!-- 지원결과 -->
+              <td class="align-middle text-center">
+                <button
+                  class="btn btn-sm mb-0 px-3 py-1"
+                  :class="item.hasResult ? 'btn-info' : 'btn-outline-secondary'"
+                  :disabled="!item.hasResult"
                 >
+                  보기
+                </button>
               </td>
             </tr>
           </tbody>

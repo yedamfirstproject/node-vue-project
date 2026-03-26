@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import AuthorsTable from "./components/AuthorsMainTableTest.vue";
+import AuthorsTable from "./components/AuthorsMainTable.vue";
 // 💡 방금 만든 자동화 페이징 컴포넌트 불러오기 (경로 주의!)
 import MainPagination from "../components/MainPagination.vue";
 
