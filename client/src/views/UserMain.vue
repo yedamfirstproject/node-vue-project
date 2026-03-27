@@ -1,9 +1,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import AuthorsTable from "./components/AuthorsMainTableTest.vue";
+import AuthorsTable from "./components/AuthorsMainTable.vue";
 // 💡 방금 만든 자동화 페이징 컴포넌트 불러오기 (경로 주의!)
 import MainPagination from "../components/MainPagination.vue";
+import UserHeader from "./components/RoleHeader.vue";
 
 // 💡 상태 바구니 3형제 준비
 const listData = ref([]); // 표에 그릴 10개 알맹이 데이터
@@ -43,9 +44,17 @@ const handlePageChange = (newPage) => {
 
 <template>
   <div class="py-4 container-fluid">
+    <UserHeader userRole="USER" userName="고동현" />
+
     <div class="row">
       <div class="col-12">
-        <authors-table :surveyList="listData" userRole="USER" />
+        <authors-table
+          :surveyList="listData"
+          userRole="USER"
+          :totalCount="totalCount"
+          :currentPage="currentPage"
+          :limit="5"
+        />
 
         <main-pagination
           :totalCount="totalCount"
