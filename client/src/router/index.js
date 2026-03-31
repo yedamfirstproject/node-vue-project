@@ -15,6 +15,7 @@ import ConsultAdd from "./consultInsert_router";
 import GeneralPlan from "./general_plan_router";
 import RejectedList from "./rejectedList_router";
 import ApprovalPlan from "./approval_plan_router";
+import ResultPlanWrite from "./result_plan_router";
 
 const routes = [
   {
@@ -36,6 +37,7 @@ const routes = [
   ...GeneralPlan,
   ...RejectedList,
   ...ApprovalPlan,
+  ...ResultPlanWrite,
 ];
 
 const router = createRouter({

@@ -1,17 +1,13 @@
-// D:\node-vue-project\client\src\router\rejectedList_router.js
-import RejectedPlanList from "../views/components/RejectedPlanList.vue";
-
-const routes = [
+// 지원계획서 반려내역 조회
+export default [
   {
     path: "/manager/rejected/plan",
     name: "ManagerRejectedPlanList",
-    component: RejectedPlanList,
+    component: () => import("../views/components/RejectedPlanList.vue"),
   },
   {
     path: "/general/rejected/plan",
     name: "GeneralRejectedPlanList",
-    component: RejectedPlanList,
+    component: () => import("../views/components/RejectedPlanList.vue"),
   },
 ];
-
-export default routes;

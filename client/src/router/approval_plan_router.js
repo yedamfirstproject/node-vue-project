@@ -1,11 +1,8 @@
-import ApprovalPlanList from "../views/components/ApprovalPlanList.vue";
-
-const routes = [
+// 관리자 지원계획서 승인&반려
+export default [
   {
     path: "/general/approval/plan",
     name: "GeneralApprovalPlan",
-    component: ApprovalPlanList,
+    component: () => import("../views/components/ApprovalPlanList.vue"),
   },
 ];
-
-export default routes;
