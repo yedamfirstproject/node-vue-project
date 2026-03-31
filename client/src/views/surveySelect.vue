@@ -24,17 +24,18 @@ import surveyTop from "./components/surveyHeader.vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
-const targetUserName = ref("");
-const targetRegDate = ref("");
+
 const allSections = ref([]);
 const answerData = ref([]);
 const extraInputs = ref({});
 const extraRequest = ref("");
+const targetUserName = ref("");
+const targetRegDate = ref("");
 
 onMounted(async () => {
   try {
     const J_ID = Object.keys(route.query)[0];
-    console.log("보내는 J_ID 값:", J_ID);
+    // console.log("보내는 J_ID 값:", J_ID);
     const response = await fetch(`http://localhost:3000/survey/user/${J_ID}`);
 
     if (!response.ok) {
@@ -45,7 +46,7 @@ onMounted(async () => {
     console.log("DB에서 내려온 데이터:", rawQuestions);
 
     if (rawQuestions.length > 0) {
-      targetUserName.value = rawQuestions[0].G_UserId || "이름없음";
+      targetUserName.value = rawQuestions[0].userName || "이름없음";
       targetRegDate.value = rawQuestions[0].created_at || "-";
     }
 
@@ -87,6 +88,7 @@ onMounted(async () => {
     });
 
     const finalSections = Object.values(sectionsMap);
+    //객체에서 값만 가지고와서 배열로 만듦
     allSections.value = finalSections;
 
     answerData.value = finalSections.map((sec) =>

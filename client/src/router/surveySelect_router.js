@@ -10,7 +10,7 @@ export default [
     //기관 담당자, 기관 관리자 조사지 조회 Router
     path: "/manager/managerselect",
     name: "managerSelect",
-    component: () => import("../views/managerSelect.vue"),
+    component: () => import("../views/SelectManager.vue"),
     meta: { hideNavbar: true }, // 이 페이지에서만 고정 상단바 취소
   },
 ];

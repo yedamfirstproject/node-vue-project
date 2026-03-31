@@ -1,268 +1,101 @@
-<script setup>
-import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import axios from "axios";
-
-const route = useRoute();
-const router = useRouter();
-
-// 상태 관리
-const candidateInfo = ref(null);
-const requestInfo = ref({
-  priorityCode: "", // 'f002' 같은 원본 코드 (나중에 승인할 때 돌려줘야 함)
-  priorityText: "", // '중점' 같은 화면 표시용 한글
-  reason: "", // 담당자가 적은 사유
-});
-
-const showRejectInput = ref(false);
-const rejectReasonText = ref("");
-
-// 💡 화면 켜질 때 DB에서 2가지 데이터 다 가져오기!
-onMounted(async () => {
-  const surveyId = route.params.id;
-
-  try {
-    // 1. 지원자 기본 정보
-    const candidateRes = await axios.get(
-      `http://localhost:3000/priority/${surveyId}`,
-    );
-    candidateInfo.value = candidateRes.data;
-
-    // 2. 담당자가 올린 결재 대기 정보(사유, 요청단계)
-    const requestRes = await axios.get(
-      `http://localhost:3000/priority/request-info/${surveyId}`,
-    );
-    if (requestRes.data) {
-      requestInfo.value = requestRes.data;
-    }
-  } catch (err) {
-    console.error("정보 로딩 실패:", err);
-  }
-});
-
-// 💡 [승인] 버튼 클릭 시 백엔드로 POST 쏘기
-const approveRequest = async () => {
-  if (confirm("이 우선순위 요청을 승인하시겠습니까?")) {
-    try {
-      const surveyId = route.params.id;
-      const response = await axios.post(
-        `http://localhost:3000/priority/decide/${surveyId}`,
-        {
-          action: "approve",
-          reqPriorityCode: requestInfo.value.priorityCode, // 예: 원래 요청했던 'f002'를 같이 보냄
-        },
-      );
-
-      if (response.status === 200) {
-        alert("승인이 완료되었습니다!");
-        router.push("/general"); // 완료 후 메인화면으로!
-      }
-    } catch (err) {
-      console.error("승인 처리 에러:", err);
-      alert("처리 중 서버 오류가 발생했습니다.");
-    }
-  }
-};
-
-// 💡 [반려 등록] 버튼 클릭 시 백엔드로 POST 쏘기
-const submitReject = async () => {
-  if (!rejectReasonText.value.trim()) {
-    alert("반려 사유를 입력해주세요!");
-    return;
-  }
-
-  if (confirm("정말 반려하시겠습니까?")) {
-    try {
-      const surveyId = route.params.id;
-      const response = await axios.post(
-        `http://localhost:3000/priority/decide/${surveyId}`,
-        {
-          action: "reject",
-          rejectReason: rejectReasonText.value, // 관리자가 빡쳐서(?) 적은 반려 사유
-        },
-      );
-
-      if (response.status === 200) {
-        alert("반려 처리되었습니다!");
-        router.push("/general");
-      }
-    } catch (err) {
-      console.error("반려 처리 에러:", err);
-      alert("처리 중 서버 오류가 발생했습니다.");
-    }
-  }
-};
-
-const goBack = () => {
-  router.push("/general");
-};
-
-// const props = defineProps({
-//   surveyList: {
-//     type: Array,
-//     required: true,
-//     default: () => [], // 만약 데이터가 안 오면 빈 배열로 에러 방지
-//   },
-//   userRole: {
-//     type: String,
-//     required: true, // "USER", "MANAGER", "ADMIN" 중 하나가 들어올 예정
-//   },
-//   totalCount: {
-//     type: Number,
-//     required: true,
-//   },
-//   currentPage: {
-//     type: Number,
-//     required: true,
-//   },
-//   limit: {
-//     type: Number,
-//     required: true,
-//   },
-// });
-
-//기관담당자 지정(김경환 20260331)
-// const getManagerList = async () => {
-//   try{
-//     if(!instiInfo.roll.length){
-//       managerList.value = []
-//       instiInfo.roll = []
-//       return
-//     }
-//   }
-// }
-
-// const onChangeManager = async () => {
-//   await getManagerList();
-// }
-</script>
-
 <template>
-  <div class="container-fluid py-4">
+  <surveyTop />
+  <div class="py-4 container-fluid">
     <div class="row">
-      <div class="col-12 col-lg-8 mx-auto">
-        <div class="card mb-4">
-          <div class="card-header pb-0">
-            <h6 class="mb-0">지원자 정보</h6>
-          </div>
-          <div class="card-body">
-            <div class="row" v-if="candidateInfo">
-              <div class="col-md-6">
-                <p class="text-sm mb-1">
-                  <strong>지원자:</strong> {{ candidateInfo.supportName }}
-                </p>
-                <p class="text-sm mb-1">
-                  <strong>성별:</strong> {{ candidateInfo.genderCode }}
-                </p>
-              </div>
-              <div class="col-md-6">
-                <p class="text-sm mb-1">
-                  <strong>보호자:</strong> {{ candidateInfo.generalName }}
-                </p>
-                <p class="text-sm mb-1">
-                  <strong>생년월일:</strong> {{ candidateInfo.birthDate }}
-                </p>
-                <p class="text-sm mb-0">
-                  <strong>장애유형:</strong>
-                  {{ candidateInfo.disMajorName || "미등록" }}
-                </p>
-              </div>
-            </div>
-            <div v-else class="text-center py-3">로딩중...</div>
-          </div>
-        </div>
-
-        <div class="card text-center">
-          <div class="card-header pb-0">
-            <h5 class="mb-0">
-              {{ candidateInfo?.supportName || "지원자" }} 님의 담당자를 지정해
-              주세요.
-            </h5>
-          </div>
-          <div class="card-body">
-            <div class="mb-4">
-              <div
-                class="d-inline-flex justify-content-center align-items-center bg-gradient-success text-white rounded-circle shadow"
-                style="width: 100px; height: 100px"
-              >
-                <h4 class="text-white mb-0">
-                  {{ requestInfo.priorityText || "로딩중" }}
-                </h4>
-              </div>
-            </div>
-
-            <div
-              class="text-start bg-light p-3 rounded mb-4 mx-auto"
-              style="max-width: 500px"
-            >
-              <div class="row g-2">
-                <div class="col">
-                  <select class="form-select" multiple>
-                    <option disabled value="">대분류선택</option>
-                    <option>asdasdas</option>
-                  </select>
-                </div>
-
-                <div class="col">
-                  <select class="form-select" multiple>
-                    <option disabled value="">중분류선택</option>
-                    <option>asdasd</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <h6 class="mb-4">승인하시겠습니까?</h6>
-
-            <div
-              class="d-flex justify-content-center gap-3 mb-3"
-              v-if="!showRejectInput"
-            >
-              <button class="btn btn-primary px-5" @click="approveRequest">
-                승인
-              </button>
-              <button
-                class="btn btn-outline-danger px-5"
-                @click="showRejectInput = true"
-              >
-                반려
-              </button>
-              <button class="btn btn-secondary px-4" @click="goBack">
-                목록으로
-              </button>
-            </div>
-
-            <div
-              v-if="showRejectInput"
-              class="mx-auto"
-              style="max-width: 500px"
-            >
-              <div class="form-group text-start">
-                <label class="form-control-label text-danger"
-                  >반려 사유 (필수)</label
-                >
-                <textarea
-                  class="form-control border-danger"
-                  rows="4"
-                  v-model="rejectReasonText"
-                  placeholder="반려 사유를 상세히 적어주세요."
-                ></textarea>
-              </div>
-              <div class="d-flex justify-content-center gap-2 mt-3">
-                <button class="btn btn-danger" @click="submitReject">
-                  반려 등록
-                </button>
-                <button
-                  class="btn btn-secondary"
-                  @click="showRejectInput = false"
-                >
-                  취소
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="col-12">
+        <SelectCard
+          v-if="allSections.length > 0"
+          :sections="allSections"
+          :answers="answerData"
+          :userName="targetUserName"
+          :regDate="targetRegDate"
+          :extraInputs="extraInputs"
+          :extraRequest="extraRequest"
+        />
       </div>
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref, onMounted } from "vue";
+import surveyTop from "./components/surveyHeader.vue";
+import SelectCard from "./components/surveyManagerCard.vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+
+const allSections = ref([]);
+const answerData = ref([]);
+const extraInputs = ref({});
+const extraRequest = ref("");
+const targetUserName = ref("");
+const targetRegDate = ref("");
+
+onMounted(async () => {
+  try {
+    const J_ID = Object.keys(route.query)[0];
+    // console.log("보내는 J_ID 값:", J_ID);
+    const response = await fetch(`http://localhost:3000/survey/user/${J_ID}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const rawQuestions = await response.json();
+    console.log("DB에서 내려온 데이터:", rawQuestions);
+
+    if (rawQuestions.length > 0) {
+      targetUserName.value = rawQuestions[0].userName || "이름없음";
+      targetRegDate.value = rawQuestions[0].created_at || "-";
+    }
+
+    const allAnswers = rawQuestions.find((q) => q.answer)?.answer || "";
+    const answerArray = allAnswers.split(",").map((a) => a.trim());
+
+    const sectionsMap = {};
+
+    rawQuestions.forEach((item, index) => {
+      if (!sectionsMap[item.titleCode]) {
+        sectionsMap[item.titleCode] = {
+          title: item.titleCode,
+          subs: [],
+        };
+      }
+
+      let sub = sectionsMap[item.titleCode].subs.find(
+        (s) => s.subTitle === item.titleCode,
+      );
+
+      if (!sub) {
+        sub = {
+          subTitle: item.titleCode,
+          description: "상세 내역 확인",
+          questions: [],
+          tempAnswerList: [],
+        };
+        sectionsMap[item.titleCode].subs.push(sub);
+      }
+
+      sub.questions.push({
+        text: item.question_text,
+        question_id: item.question_id,
+        hasExtraInput: item.answer_type === "e001",
+        answer_type: item.answer_type,
+      });
+
+      sub.tempAnswerList.push(answerArray[index] || "");
+    });
+
+    const finalSections = Object.values(sectionsMap);
+    //객체에서 값만 가지고와서 배열로 만듦
+    allSections.value = finalSections;
+
+    answerData.value = finalSections.map((sec) =>
+      sec.subs.map((sub) => sub.tempAnswerList),
+    );
+  } catch (err) {
+    console.error("조사지 데이터 불러오기 실패:", err);
+  }
+});
+</script>

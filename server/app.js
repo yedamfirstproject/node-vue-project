@@ -78,3 +78,6 @@ app.use("/result/plan", resultPlanRouter);
 //기관담당자 지원계획서
 const managerPlanRouter = require("./routers/plan/plan_router.js");
 app.use("/manager/plan", managerPlanRouter);
+//상담기록
+const consultRouter = require("./routers/consult/consult_router.js");
+app.use("./consult", consultRouter);

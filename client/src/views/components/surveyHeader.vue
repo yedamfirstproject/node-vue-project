@@ -84,6 +84,10 @@
 <script setup>
 //로그인 이용자 이름 반영(김경환 20260330)
 import { defineProps, computed } from "vue";
+import { useAuthStore } from "@/stores/counter";
+
+const userAuthStore = useAuthStore();
+
 defineProps({
   userRole: {
     type: String,
@@ -91,9 +95,6 @@ defineProps({
     default: "USER",
   },
 });
-
-import { useAuthStore } from "@/stores/counter";
-const userAuthStore = useAuthStore();
 
 const userName = computed(() => userAuthStore.user?.name);
 </script>
