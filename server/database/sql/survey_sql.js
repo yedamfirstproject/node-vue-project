@@ -18,7 +18,8 @@ ORDER BY J_ID`;
 const selectSurveyById = `
 SELECT 
     m.J_ID, 
-    m.G_UserId, 
+    m.G_UserId,
+    u.name AS userName,
     m.created_at, 
     m.reason,
     q.question_id, 
@@ -30,6 +31,8 @@ SELECT
 FROM Survey_Tbl m
 INNER JOIN SurveyItem_Tbl q 
     ON m.Ver_Id = q.Ver_Id
+LEFT JOIN GeneralUser_Tbl u
+    ON m.G_UserId = u.G_UserId
 LEFT JOIN SurveyUserAnswer_Tbl a 
     ON q.question_id = a.question_id 
     AND a.J_ID = m.J_ID

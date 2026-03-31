@@ -81,6 +81,7 @@
               <div>정 : {{ item.managerMain }}</div>
               <div class="text-muted">부 : {{ item.managerSub }}</div>
             </td>
+            6
             <td>
               <div class="action-buttons">
                 <button class="btn-outline-edit">수정</button>

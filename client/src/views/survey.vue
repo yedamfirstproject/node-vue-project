@@ -30,7 +30,7 @@ const route = useRoute();
 
 const selectedSupport = ref(null);
 const allSections = ref([]);
-const Ver_Id = ref(null);
+const Ver_Id = ref("");
 
 const info = reactive({
   G_UserId: "GUSR0000",
@@ -111,6 +111,7 @@ const loadLatestQuestions = async () => {
   }
 };
 
+//사이드바
 const loadSupportDetail = async (support_id) => {
   if (!support_id) {
     selectedSupport.value = null;
@@ -139,6 +140,7 @@ const loadSupportDetail = async (support_id) => {
   }
 };
 
+//카드에서 넘어오는 등록 관련 데이터
 const surveyInfo = async (payload) => {
   const finalSupportId =
     payload?.support_id || selectedSupport.value?.support_id || info.support_id;
