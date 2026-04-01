@@ -231,6 +231,19 @@ const goToResult = (surveyId) => {
                   반려
                 </button>
 
+                <button
+                  v-else-if="
+                    props.userRole === 'MANAGER' &&
+                    item.priorityCode === '심사중'
+                  "
+                  class="btn btn-sm btn-secondary mb-0 px-3 py-1"
+                  @click="
+                    $router.push(`/manager/priority-request/${item.surveyId}`)
+                  "
+                >
+                  심사중
+                </button>
+
                 <span
                   v-else
                   class="badge badge-sm"

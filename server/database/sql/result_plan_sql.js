@@ -24,9 +24,10 @@ const selectApprovedPlansForModal = `
   LEFT JOIN DisMajor_Tbl dm ON sp.major = dm.b_Code
   WHERE p.state = 'g001' /* 🚨 무조건 승인된 계획서만! */
     AND p.I_UserId1 = ?  /* 💡 로그인한 담당자 본인 것만! */
-    /* 🌟 핵심 센스: 이미 결과서(PlanResult_Tbl)가 있는 계획서는 목록에서 제외! */
-    AND NOT EXISTS (
-      SELECT 1 FROM PlanResult_Tbl pr WHERE pr.supportPlan_id = p.supportPlan_id
+    
+    /* 🌟 핵심 해결: 현재 승인완료(g001) 또는 대기중(g003)인 결과서가 존재하는 계획서는 제외! (반려(g002)된 건 다시 노출) */
+    AND p.supportPlan_id NOT IN (
+      SELECT supportPlan_id FROM PlanResult_Tbl WHERE state IN ('g001', 'g003')
     )
 `;
 
