@@ -90,8 +90,45 @@ const fetchGeneralResultList = async (
   return { data: formattedList, totalCount: formattedList.length };
 };
 
+// 결과서 반려 목록 조회
+const fetchRejectedResultList = async (
+  instiId,
+  managerId,
+  filters,
+  page,
+  limit,
+) => {
+  const offset = (page - 1) * limit;
+  const rawList = await mapper.getRejectedResultList(
+    instiId,
+    managerId,
+    filters,
+    limit,
+    offset,
+  );
+
+  const formattedList = rawList.map((item) => {
+    const formatDate = (dateStr) => {
+      if (!dateStr) return "";
+      const d = new Date(dateStr);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    };
+
+    return {
+      ...item,
+      support_startDate: formatDate(item.support_startDate),
+      supprot_endDate: formatDate(item.supprot_endDate),
+      created_at: formatDate(item.created_at),
+      stateName: "반려", // 고정
+    };
+  });
+
+  return { data: formattedList, totalCount: formattedList.length };
+};
+
 module.exports = {
   fetchApprovedPlansForModal,
   savePlanResult,
   fetchGeneralResultList,
+  fetchRejectedResultList,
 };

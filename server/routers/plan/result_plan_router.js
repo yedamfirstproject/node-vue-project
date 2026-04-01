@@ -91,4 +91,35 @@ router.get("/general-list", async (req, res) => {
   }
 });
 
+// 지원결과서 반려 목록 조회
+router.get("/rejected-list", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const role = req.query.role;
+
+    const instiId = "INST0000";
+    const managerId = role === "manager" ? "IUSR0003" : null;
+
+    const filters = {
+      managerName: req.query.managerName || "",
+      guardianName: req.query.guardianName || "",
+      supportName: req.query.supportName || "",
+    };
+
+    const result = await service.fetchRejectedResultList(
+      instiId,
+      managerId,
+      filters,
+      page,
+      limit,
+    );
+    res.status(200).json(result);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "반려 목록 조회 실패", error: err.message });
+  }
+});
+
 module.exports = router;
