@@ -11,7 +11,7 @@
           <div class="header-left">
             <div class="avatar avatar-xl position-relative flex-shrink-0">
               <img
-                src="@/assets/img/team-1.jpg"
+                src="@/assets/img/2조로고.png"
                 alt="profile_image"
                 class="shadow-sm w-100 border-radius-lg"
               />
@@ -53,6 +53,9 @@
                     </button>
                   </li>
 
+                <template
+                  v-if="userRole === ROLE.ADMIN || userRole === ROLE.MANAGER"
+                >
                   <li class="nav-item">
                     <button
                       type="button"
