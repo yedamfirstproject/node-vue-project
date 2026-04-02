@@ -5,6 +5,7 @@ import { useRoute } from "vue-router";
 import axios from "axios";
 import GeneralPlanCardList from "@/views/components/GeneralPlanCardList.vue";
 import { Modal } from "bootstrap"; // 💡 여기서 가져온 Modal을 아래 onMounted에서 쓸 거야!
+import RoleHeader from "./RoleHeader.vue";
 
 const route = useRoute();
 
@@ -93,6 +94,7 @@ onMounted(() => {
 
 <template>
   <div class="container-fluid py-4">
+    <RoleHeader />
     <div class="row">
       <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-3">

@@ -6,6 +6,7 @@ import axios from "axios";
 // 💡 1. 우리가 새로 만든 반려 전용 카드를 불러오도록 수정!
 import RejectedPlanCardList from "@/views/components/RejectedPlanCardList.vue";
 import { Modal } from "bootstrap";
+import RoleHeader from "./RoleHeader.vue";
 
 const route = useRoute();
 // 기관 관리자인지 담당자인지 Role 설정 (라우터 경로 기준)
@@ -63,6 +64,7 @@ onMounted(() => {
 
 <template>
   <div class="container-fluid py-4">
+    <RoleHeader />
     <div class="row">
       <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-3">

@@ -4,6 +4,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { Modal } from "bootstrap";
+import RoleHeader from "./RoleHeader.vue";
 
 const router = useRouter();
 
@@ -111,6 +112,7 @@ onMounted(() => {
 
 <template>
   <div class="container-fluid py-4">
+    <RoleHeader />
     <div class="row">
       <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-4">
