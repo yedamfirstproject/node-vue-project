@@ -256,7 +256,7 @@ router.get(`/instiUsers/:roll/:institution_id`, async (req, res) => {
   try {
     const { roll, institution_id } = req.params;
 
-    let result = await userService.getManagerList(roll, instId);
+    let result = await userService.getManagerList(roll, institution_id);
 
     res.json(result);
   } catch (err) {
@@ -383,16 +383,15 @@ router.post("/assign", async (req, res) => {
 
   await userService.updateManager(I_UserId1, I_UserId2, support_id);
 
+  res.send({ success: true });
+});
+
 //해당기관 가져오기
 router.get(`/institutionInfo`, requireInstRole, async (req, res) => {
-  const iUserId = req.session.loginInstUser.I_UserId; 
+  const iUserId = req.session.loginInstUser.I_UserId;
   const result = await userService.getInstInfoById(iUserId);
 
   res.send(result);
-});
-
-
-  res.send({ success: true });
 });
 
 router.get("/wait-insti-users", async (req, res) => {
@@ -420,9 +419,11 @@ router.patch("/approve-manager/:id", async (req, res) => {
   res.send({ status: "success" });
 });
 
-router.get("/support/by-user/:gid", async (req, res) => {
-  const gid = req.params.gid;
-  const result = await userService.getSupportInstitutionByUser(gid);
+router.get("/support/by-jid/:jid", async (req, res) => {
+  const jid = req.params.jid;
+
+  const result = await userService.getSupportInstitutionByJid(jid);
+
   res.json(result);
 });
 module.exports = router;
