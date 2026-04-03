@@ -126,6 +126,17 @@ router.get(`/institutions`, requireUser, async (req, res) => {
   res.send(result);
 });
 
+//회원가입 기관선택
+router.get(`/institution`, async (req, res) => {
+  const { sido, sigungu, keyword } = req.query;
+  const result = await userService.searchInstitutions({
+    sido,
+    sigungu,
+    keyword,
+  });
+  res.send(result);
+});
+
 //로그인확인(김경환 2026.03.25)
 router.post(`/login`, async (req, res) => {
   let body = req.body;
@@ -496,5 +507,17 @@ router.patch("/reject-manager/:id", async (req, res) => {
   }
   await userService.rejectInstiUser(req.params.id);
   res.send({ status: "success" });
+});
+
+router.get("/checkid/:id", async (req, res) => {
+  const id = req.params.id;
+  const result = await userService.userIdCheck(id);
+  res.send(result);
+});
+
+router.get("/checkinstiid/:id", async (req, res) => {
+  const institution_id = req.params.id;
+  const result = await userService.instiIdCheck(institution_id);
+  res.send(result);
 });
 module.exports = router;
