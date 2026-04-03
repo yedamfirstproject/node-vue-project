@@ -3,8 +3,8 @@
   <div class="py-4 container-fluid" style="position: relative; z-index: 10">
     <div class="row">
       <div class="col-12">
-        <div class="row mb-3">
-          <div class="col-5">
+        <div class="row mb-3 justify-content-center align-items-center g-2">
+          <div class="col-4">
             <select class="form-select" v-model="mainManager">
               <option value="">담당자 선택(정)</option>
               <option
@@ -16,7 +16,8 @@
               </option>
             </select>
           </div>
-          <div class="col-5">
+
+          <div class="col-4">
             <select class="form-select" v-model="subManager">
               <option value="">담당자 선택(부)</option>
               <option
@@ -28,22 +29,14 @@
               </option>
             </select>
           </div>
-          <div class="col-2">
-            <button class="btn btn-primary" @click="saveAssignment">
+
+          <div class="col-1">
+            <button class="btn btn-primary w-100 mb-0" @click="saveAssignment">
               배정 저장
             </button>
           </div>
         </div>
-        <SelectCard
-          :sections="allSections"
-          :answers="answerData"
-          :userName="targetUserName"
-          :regDate="targetRegDate"
-          :extraInputs="extraInputs"
-          :extraRequest="extraRequest"
-          :managers="managers"
-          v-model:selectedManager="selectedManager"
-        />
+        <surveySelect @loaded="(data) => (supportId = data.supportId)" />
       </div>
     </div>
   </div>
@@ -52,10 +45,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import RoleHeader from "./components/RoleHeader.vue";
-import SelectCard from "./components/surveyManagerCard.vue";
-// import { useRoute } from "vue-router";
+// import SelectCard from "./components/surveyManagerCard.vue";
+import surveySelect from "./components/surveySelectCard.vue";
+import { useRoute } from "vue-router";
 
-// const route = useRoute();
+const route = useRoute();
 
 const allSections = ref([]);
 const answerData = ref([]);
@@ -78,6 +72,16 @@ const callme = async () => {
 
 onMounted(async () => {
   await callme();
+
+  const surveyRes = await fetch(`/survey/user/${route.params.id}`);
+  const data = await surveyRes.json();
+
+  allSections.value = data.sections || data;
+  answerData.value = data.answers || data;
+  targetUserName.value = data.userName || "";
+  targetRegDate.value = data.regDate || "";
+  extraInputs.value = data.extraInputs || {};
+  extraRequest.value = data.extraRequest || "";
   // try {
   //   const J_ID = route.params.id;
   //   let G_USER = route.query.userId || "";
