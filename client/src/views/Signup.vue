@@ -38,7 +38,7 @@ const multiFiles = (event) => {
       return;
     }
     const isSameFile = tempFiles.some(
-      (file) => file.name === newFile.name && file.size === newFile.size,
+      (file) => file.name === newFile.name && file.size === newFile.size
     );
     if (isSameFile) {
       alert(`중복된 파일입니다. 다시 확인해주세요.`);
@@ -102,34 +102,75 @@ const openPostcode = () => {
 };
 
 //일반이용자의 정보를 db에 전송시키는 함수(김경환 2026.03.24)
-const addUserInfo = async () => {
-  let data = {
-    institution_id: userInfo.institution_id,
-    name: userInfo.name,
-    id: userInfo.id,
-    password: userInfo.password,
-    tel: userInfo.tel,
-    email: userInfo.email,
-    zipCode: zipCode.value,
-    address: `${mainAddress.value} ${detailAddress.value}`.trim(),
-    document1: userInfo.document1,
-    document2: userInfo.document2,
-  };
-  console.log(data);
+// const addUserInfo = async () => {
+//   let data = {
+//     institution_id: userInfo.institution_id,
+//     name: userInfo.name,
+//     id: userInfo.id,
+//     password: userInfo.password,
+//     tel: userInfo.tel,
+//     email: userInfo.email,
+//     zipCode: zipCode.value,
+//     address: `${mainAddress.value} ${detailAddress.value}`.trim(),
+//     document1: userInfo.document1,
+//     document2: userInfo.document2,
+//   };
+//   console.log(data);
 
-  let result = await fetch(`/api/user/users`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(data),
-  })
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
-  if (result.status == "success") {
-    router.push({ name: "userLogin", params: { no: result.G_userId } });
-  } else {
-    isPrinted.value = true;
+//   let result = await fetch(`/api/user/users`, {
+//     method: "POST",
+//     headers: {
+//       "content-type": "application/json",
+//     },
+//     body: JSON.stringify(data),
+//   })
+//     .then((res) => res.json())
+//     .catch((err) => console.log(err));
+//   if (result.status == "success") {
+//     router.push({ name: "userLogin", params: { no: result.G_userId } });
+//   } else {
+//     isPrinted.value = true;
+//   }
+// };
+
+//회원가입 파일 등록 포함 수정 고동현
+const addUserInfo = async () => {
+  try {
+    const formData = new FormData();
+
+    formData.append("institution_id", guardianEditInfo.institution_id || "");
+    formData.append("name", userInfo.name || "");
+    formData.append("id", userInfo.id || "");
+    formData.append("password", userInfo.password || "");
+    formData.append("tel", userInfo.tel || "");
+    formData.append("email", userInfo.email || "");
+    formData.append("zipCode", zipCode.value || "");
+    formData.append(
+      "address",
+      `${mainAddress.value} ${detailAddress.value}`.trim(),
+    );
+
+    if (files.value[0]) {
+      formData.append("document1", files.value[0]);
+    }
+    if (files.value[1]) {
+      formData.append("document2", files.value[1]);
+    }
+
+    const result = await fetch(`/api/user/users`, {
+      method: "POST",
+      body: formData,
+    }).then((res) => res.json());
+
+    if (result.status === "success") {
+      router.push({ name: "userLogin", params: { no: result.G_UserId } });
+    } else {
+      isPrinted.value = true;
+      alert(result.message || "회원가입 실패");
+    }
+  } catch (err) {
+    console.log(err);
+    alert("회원가입 중 오류가 발생했습니다.");
   }
 };
 
@@ -253,16 +294,7 @@ const sigunguMap = {
     "중랑구",
   ],
   대구: ["중구", "동구", "서구", "남구", "북구", "수성구", "달서구", "달성군"],
-  경기: [
-    "수원시",
-    "성남시",
-    "용인시",
-    "부천시",
-    "안산시",
-    "안양시",
-    "화성시",
-    "평택시",
-  ],
+  경기: ["수원시", "성남시", "용인시", "부천시", "안산시", "안양시", "화성시", "평택시"],
 };
 
 const guardianEditInfo = reactive({
@@ -356,7 +388,7 @@ onBeforeUnmount(() => {
     <div
       class="page-header align-items-start min-vh-50 pt-5 pb-11 m-3 border-radius-lg"
       style="
-        background-image: url(&quot;https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signup-cover.jpg&quot;);
+        background-image: url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signup-cover.jpg');
         background-position: top;
       "
     >
@@ -385,9 +417,7 @@ onBeforeUnmount(() => {
                   <argon-button>일반이용자</argon-button>
                 </div>
                 <div class="col-auto">
-                  <argon-button color="dark" @click="goInsti()"
-                    >기관직원</argon-button
-                  >
+                  <argon-button color="dark" @click="goInsti()">기관직원</argon-button>
                 </div>
               </div>
             </div>
@@ -400,24 +430,27 @@ onBeforeUnmount(() => {
                   aria-label="Name"
                   v-model="userInfo.name"
                 />
-                <div class="d-flex gap-2">
-                  <argon-input
-                    id="id"
-                    type="text"
-                    placeholder="아이디"
-                    aria-label="Id"
-                    v-model="userInfo.id"
-                  />
+                <div class="d-flex gap-2 align-items-stretch">
+                  <div class="flex-grow-1">
+                    <argon-input
+                      id="id"
+                      type="text"
+                      placeholder="아이디"
+                      aria-label="Id"
+                      v-model="userInfo.id"
+                    />
+                  </div>
+
                   <argon-button
-                    class="mt-auto p-3 d-flex justify-content-center gap-3"
+                    color="dark"
+                    size="sm"
+                    style="height: 38px"
                     @click.prevent="checkUserId"
-                    >중복확인</argon-button
                   >
+                    중복확인
+                  </argon-button>
                 </div>
-                <p
-                  v-if="message"
-                  :style="{ color: isDuplicate ? 'red' : 'green' }"
-                >
+                <p v-if="message" :style="{ color: isDuplicate ? 'red' : 'green' }">
                   {{ message }}
                 </p>
                 <argon-input
@@ -452,9 +485,7 @@ onBeforeUnmount(() => {
                 <div class="row">
                   <div class="col-md-12">
                     <label class="form-control-label">주소</label>
-                    <div
-                      class="row g-2 mb-2 align-items-stretch justify-content-start"
-                    >
+                    <div class="row g-2 mb-2 align-items-stretch justify-content-start">
                       <div class="col-4">
                         <argon-input
                           class="mb-0"
@@ -467,10 +498,7 @@ onBeforeUnmount(() => {
                       </div>
 
                       <div class="col-auto d-flex">
-                        <argon-button
-                          class="mb-0 px-3"
-                          @click.prevent="openPostcode()"
-                        >
+                        <argon-button class="mb-0 px-3" @click.prevent="openPostcode()">
                           주소 검색
                         </argon-button>
                       </div>
@@ -535,18 +563,24 @@ onBeforeUnmount(() => {
                 </div>
                 <div class="col-md-12 mt-3">
                   <label class="form-control-label">등록된 기관명</label>
-                  <div class="d-flex gap-2 align-items-center">
+                  <div class="d-flex gap-2 align-items-stretch">
                     <div class="flex-grow-1">
-                      <div class="form-control bg-light">
+                      <div
+                        class="form-control bg-light d-flex align-items-center"
+                        style="height: 36px"
+                      >
                         {{ guardianEditInfo.institution }}
                       </div>
                     </div>
+
                     <argon-button
                       color="dark"
                       size="sm"
+                      style="height: 36px"
                       @click.prevent="openInstitutionModal"
-                      >기관 검색</argon-button
                     >
+                      기관 검색
+                    </argon-button>
                   </div>
                 </div>
                 <div
@@ -554,10 +588,7 @@ onBeforeUnmount(() => {
                   class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
                   style="background-color: rgba(0, 0, 0, 0.45); z-index: 2000"
                 >
-                  <div
-                    class="card shadow-lg"
-                    style="width: 700px; max-width: 90%"
-                  >
+                  <div class="card shadow-lg" style="width: 700px; max-width: 90%">
                     <div
                       class="card-header d-flex justify-content-between align-items-center"
                     >
@@ -579,11 +610,7 @@ onBeforeUnmount(() => {
                             @change="onChangeSido"
                           >
                             <option value="">선택</option>
-                            <option
-                              v-for="item in sidoList"
-                              :key="item"
-                              :value="item"
-                            >
+                            <option v-for="item in sidoList" :key="item" :value="item">
                               {{ item }}
                             </option>
                           </select>
@@ -591,16 +618,9 @@ onBeforeUnmount(() => {
 
                         <div class="col-md-4">
                           <label class="form-control-label">구 / 군</label>
-                          <select
-                            class="form-select"
-                            v-model="institutionSearch.sigungu"
-                          >
+                          <select class="form-select" v-model="institutionSearch.sigungu">
                             <option value="">선택</option>
-                            <option
-                              v-for="item in sigunguList"
-                              :key="item"
-                              :value="item"
-                            >
+                            <option v-for="item in sigunguList" :key="item" :value="item">
                               {{ item }}
                             </option>
                           </select>
@@ -625,10 +645,7 @@ onBeforeUnmount(() => {
                         >
                           닫기
                         </argon-button>
-                        <argon-button
-                          color="dark"
-                          @click.prevent="searchInstitution"
-                        >
+                        <argon-button color="dark" @click.prevent="searchInstitution">
                           검색
                         </argon-button>
                       </div>
@@ -658,10 +675,7 @@ onBeforeUnmount(() => {
                           </thead>
                           <tbody>
                             <tr v-if="!institutionList.length">
-                              <td
-                                colspan="3"
-                                class="text-center text-muted py-3"
-                              >
+                              <td colspan="3" class="text-center text-muted py-3">
                                 검색 결과가 없습니다.
                               </td>
                             </tr>
