@@ -154,9 +154,30 @@ const emit = defineEmits(["onApprove", "onRejectClick"]);
         </div>
       </div>
 
-      <div v-if="props.resultList.length === 0" class="text-center py-5">
-        <p class="text-secondary mb-0">검토 대기 중인 지원결과서가 없습니다.</p>
+      <div
+        v-if="props.resultList.length === 0"
+        class="empty-state-card d-flex flex-column justify-content-center align-items-center text-center bg-gray-100 border-radius-lg shadow-sm mb-4"
+      >
+        <i
+          class="fas fa-clipboard-check text-secondary mb-3"
+          style="font-size: 4rem"
+        ></i>
+        <h5 class="text-secondary fw-bold mb-2">
+          검토 대기 중인 지원결과서가 없습니다.
+        </h5>
+        <p class="text-sm text-secondary mb-0">
+          모든 지원결과서의 검토가 완료되었거나, 아직 새롭게 제출된 내역이
+          없습니다.
+        </p>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.empty-state-card {
+  min-height: 50vh; /* 화면 높이의 절반 정도를 차지하게 해서 꽉 차 보이게 함 */
+  background-color: #f8f9fa; /* 안정감 있는 아주 밝은 회색 */
+  border: 2px dashed #dee2e6; /* 은은하고 세련된 점선 테두리 */
+}
+</style>

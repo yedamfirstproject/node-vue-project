@@ -3,6 +3,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
+import RoleHeader from "./components/RoleHeader.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -91,7 +92,9 @@ const goBack = () => {
 
 <template>
   <div class="container-fluid py-4">
-    <div class="row">
+    <RoleHeader />
+
+    <div class="row mt-4">
       <div class="col-12 col-lg-8 mx-auto">
         <div class="card mb-4">
           <div class="card-header pb-0">
