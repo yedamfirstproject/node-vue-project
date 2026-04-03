@@ -32,7 +32,10 @@ const getDisplayFileName = (fileName) => {
 // 다운로드
 const downloadUserFile = (fileName) => {
   if (!fileName) return;
-  window.open(`/api/user/download/user/${encodeURIComponent(fileName)}`, "_blank");
+  window.open(
+    `/api/user/download/user/${encodeURIComponent(fileName)}`,
+    "_blank",
+  );
 };
 
 // 데이터 조회
@@ -96,7 +99,7 @@ onMounted(() => {
 <template>
   <RoleHeader />
 
-  <div class="card">
+  <div class="container card mt-5">
     <div class="card-header pb-0">
       <h6>사용자 가입 승인 관리</h6>
     </div>
@@ -140,12 +143,8 @@ onMounted(() => {
               <th class="text-center text-xs">구분</th>
 
               <!-- 🔥 기관만 선택하면 컬럼 숨김 -->
-              <th v-if="!isOnlyInsti" class="text-center text-xs">
-                첨부파일1
-              </th>
-              <th v-if="!isOnlyInsti" class="text-center text-xs">
-                첨부파일2
-              </th>
+              <th v-if="!isOnlyInsti" class="text-center text-xs">첨부파일1</th>
+              <th v-if="!isOnlyInsti" class="text-center text-xs">첨부파일2</th>
 
               <th class="text-center text-xs">승인</th>
             </tr>
@@ -199,10 +198,7 @@ onMounted(() => {
                 >
                   승인
                 </button>
-                <button
-                  class="btn btn-danger btn-sm"
-                  @click="rejectUser(user)"
-                >
+                <button class="btn btn-danger btn-sm" @click="rejectUser(user)">
                   거절
                 </button>
               </td>
