@@ -157,7 +157,7 @@ const saveAssignment = async () => {
 
   try {
     // 담당자 배정 저장
-    const response = await fetch("http://localhost:3000/user/assign", {
+    const response = await fetch("/api/user/assign", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

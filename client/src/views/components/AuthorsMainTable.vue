@@ -30,10 +30,10 @@ const props = defineProps({
   },
 });
 
-const goManager = () => {
-  //하드코딩상태
-  router.push("/general/select-manager/SUV0057");
-};
+// const goManager = (surveyId) => {
+//   //하드코딩상태
+//   router.push(`/general/select-manager/${surveyId}`);
+// };
 
 const goToPlan = (surveyId) => {
   if (props.userRole === "USER") {
@@ -179,7 +179,9 @@ const goToResult = (surveyId) => {
                   <button
                     v-if="props.userRole === 'GENERAL' && !item.instiName"
                     class="badge bg-gradient-warning border-0"
-                    @click="goManager()"
+                    @click="
+                      $router.push(`/general/select-manager/${item.surveyId}`)
+                    "
                   >
                     배정
                   </button>

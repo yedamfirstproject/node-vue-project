@@ -64,30 +64,30 @@ const addInstiUserInfo = async () => {
 //기관이용자 아이디 중복 확인 (김경환 2060327)
 const message = ref("");
 
-// const idCheck = ref(false);
+const idCheck = ref(false);
 const isDuplicate = ref(false);
 
-// const checkUserId = async () => {
-//   if (!instiUserInfo.id) {
-//     alert("아이디를 입력하세요");
-//     return;
-//   }
-//   try {
-//     let res = await fetch(`/api/user/checkinstiid/${instiUserInfo.id}`);
-//     let result = await res.json();
+const checkUserId = async () => {
+  if (!instiUserInfo.id) {
+    alert("아이디를 입력하세요");
+    return;
+  }
+  try {
+    let res = await fetch(`/api/user/checkinstiid/${instiUserInfo.id}`);
+    let result = await res.json();
 
-//     idCheck.value = true;
-//     isDuplicate.value = result.duplicate;
+    idCheck.value = true;
+    isDuplicate.value = result.duplicate;
 
-//     if (result.duplicate) {
-//       message.value = "이미 사용중인 아이디입니다.";
-//     } else {
-//       message.value = "사용 가능한 아이디입니다.";
-//     }
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+    if (result.duplicate) {
+      message.value = "이미 사용중인 아이디입니다.";
+    } else {
+      message.value = "사용 가능한 아이디입니다.";
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 //비밀번호 확인(김경환 20260329)
 const passwordConfirm = ref("");
@@ -99,6 +99,141 @@ const passwordMessage = computed(() => {
     ? "비밀번호 일치"
     : "비밀번호 불일치";
 });
+
+const showInstitutionModal = ref(false);
+
+const institutionSearch = reactive({
+  sido: "",
+  sigungu: "",
+  keyword: "",
+});
+
+const institutionList = ref([]);
+const sidoList = ref([
+  "서울",
+  "부산",
+  "대구",
+  "인천",
+  "광주",
+  "대전",
+  "울산",
+  "세종",
+  "경기",
+  "강원",
+  "충북",
+  "충남",
+  "전북",
+  "전남",
+  "경북",
+  "경남",
+  "제주",
+]);
+const sigunguList = ref([]);
+
+const sigunguMap = {
+  서울: [
+    "강남구",
+    "강동구",
+    "강북구",
+    "강서구",
+    "관악구",
+    "광진구",
+    "구로구",
+    "금천구",
+    "노원구",
+    "도봉구",
+    "동대문구",
+    "동작구",
+    "마포구",
+    "서대문구",
+    "서초구",
+    "성동구",
+    "성북구",
+    "송파구",
+    "양천구",
+    "영등포구",
+    "용산구",
+    "은평구",
+    "종로구",
+    "중구",
+    "중랑구",
+  ],
+  대구: ["중구", "동구", "서구", "남구", "북구", "수성구", "달서구", "달성군"],
+  경기: [
+    "수원시",
+    "성남시",
+    "용인시",
+    "부천시",
+    "안산시",
+    "안양시",
+    "화성시",
+    "평택시",
+  ],
+};
+
+const guardianEditInfo = reactive({
+  GuserId: "",
+  userId: "",
+  name: "",
+  tel: "",
+  email: "",
+  currentPassword: "",
+  newPassword: "",
+  newPasswordConfirm: "",
+  institution: "",
+  institution_id: "",
+  file1: null,
+  file2: null,
+  joinDate: "2026.03.13 (가입 날짜로 고정)",
+});
+
+const onChangeSido = () => {
+  sigunguList.value = sigunguMap[institutionSearch.sido] || [];
+  institutionSearch.sigungu = "";
+};
+
+const openInstitutionModal = () => {
+  showInstitutionModal.value = true;
+  institutionSearch.sido = "";
+  institutionSearch.sigungu = "";
+  institutionSearch.keyword = "";
+  institutionList.value = [];
+  sigunguList.value = [];
+};
+const closeInstitutionModal = () => {
+  showInstitutionModal.value = false;
+};
+
+const searchInstitution = async () => {
+  const query = new URLSearchParams({
+    sido: institutionSearch.sido,
+    sigungu: institutionSearch.sigungu,
+    keyword: institutionSearch.keyword,
+  }).toString();
+
+  const result = await fetch(`/api/user/institution?${query}`, {
+    method: "GET",
+    credentials: "include",
+  })
+    .then((resp) => resp.json())
+    .catch((err) => {
+      console.log(err);
+      return null;
+    });
+
+  if (result && result.status === "Success") {
+    institutionList.value = result.data || [];
+  } else {
+    institutionList.value = [];
+    alert(result?.message || "기관 검색 실패");
+  }
+};
+
+const selectInstitution = (item) => {
+  guardianEditInfo.institution = item.institution_name || "";
+  guardianEditInfo.institution_id = item.institution_id || "";
+  showInstitutionModal.value = false;
+};
 
 onBeforeMount(() => {
   store.state.hideConfigButton = true;
@@ -180,11 +315,11 @@ onBeforeUnmount(() => {
                     aria-label="Id"
                     v-model="instiUserInfo.id"
                   />
-                  <!-- <argon-button
+                  <argon-button
                     class="mt-auto p-3 d-flex justify-content-center gap-3"
                     @click.prevent="checkUserId"
                     >중복확인</argon-button
-                  > -->
+                  >
                 </div>
                 <p
                   v-if="message"
@@ -214,12 +349,161 @@ onBeforeUnmount(() => {
                   aria-label="Tel"
                   v-model="instiUserInfo.tel"
                 />
-                <argon-input
-                  id="insti"
-                  type="text"
-                  placeholder="소속 기관"
-                  v-model="instiUserInfo.institution_id"
-                />
+                <div class="col-md-12 mt-3">
+                  <label class="form-control-label">소속 기관</label>
+                  <div class="d-flex gap-2 align-items-center">
+                    <div class="flex-grow-1">
+                      <div class="form-control bg-light">
+                        {{ guardianEditInfo.institution }}
+                      </div>
+                    </div>
+                    <argon-button
+                      color="dark"
+                      size="sm"
+                      @click.prevent="openInstitutionModal"
+                      >기관 검색</argon-button
+                    >
+                  </div>
+                </div>
+                <div
+                  v-if="showInstitutionModal"
+                  class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+                  style="background-color: rgba(0, 0, 0, 0.45); z-index: 2000"
+                >
+                  <div
+                    class="card shadow-lg"
+                    style="width: 700px; max-width: 90%"
+                  >
+                    <div
+                      class="card-header d-flex justify-content-between align-items-center"
+                    >
+                      <h6 class="mb-0">기관 검색</h6>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        @click="closeInstitutionModal"
+                      ></button>
+                    </div>
+
+                    <div class="card-body">
+                      <div class="row g-2">
+                        <div class="col-md-4">
+                          <label class="form-control-label">시 / 도</label>
+                          <select
+                            class="form-select"
+                            v-model="institutionSearch.sido"
+                            @change="onChangeSido"
+                          >
+                            <option value="">선택</option>
+                            <option
+                              v-for="item in sidoList"
+                              :key="item"
+                              :value="item"
+                            >
+                              {{ item }}
+                            </option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label class="form-control-label">구 / 군</label>
+                          <select
+                            class="form-select"
+                            v-model="institutionSearch.sigungu"
+                          >
+                            <option value="">선택</option>
+                            <option
+                              v-for="item in sigunguList"
+                              :key="item"
+                              :value="item"
+                            >
+                              {{ item }}
+                            </option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label class="form-control-label">기관명</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            v-model="institutionSearch.keyword"
+                            placeholder="기관명 입력"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="mt-3 text-end">
+                        <argon-button
+                          color="secondary"
+                          class="me-2"
+                          @click="closeInstitutionModal"
+                        >
+                          닫기
+                        </argon-button>
+                        <argon-button
+                          color="dark"
+                          @click.prevent="searchInstitution"
+                        >
+                          검색
+                        </argon-button>
+                      </div>
+
+                      <hr />
+
+                      <div style="max-height: 300px; overflow-y: auto">
+                        <table class="table align-items-center mb-0">
+                          <thead>
+                            <tr>
+                              <th
+                                class="text-secondary text-xs font-weight-bolder opacity-7"
+                              >
+                                기관명
+                              </th>
+                              <th
+                                class="text-secondary text-xs font-weight-bolder opacity-7"
+                              >
+                                주소
+                              </th>
+                              <th
+                                class="text-secondary text-xs font-weight-bolder opacity-7 text-center"
+                              >
+                                선택
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-if="!institutionList.length">
+                              <td
+                                colspan="3"
+                                class="text-center text-muted py-3"
+                              >
+                                검색 결과가 없습니다.
+                              </td>
+                            </tr>
+
+                            <tr
+                              v-for="item in institutionList"
+                              :key="item.institution_id"
+                            >
+                              <td>{{ item.institution_name }}</td>
+                              <td>{{ item.address }}</td>
+                              <td class="text-center">
+                                <argon-button
+                                  size="sm"
+                                  color="info"
+                                  @click="selectInstitution(item)"
+                                >
+                                  선택
+                                </argon-button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="text-center">
                   <argon-button
                     fullWidth

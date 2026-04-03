@@ -136,30 +136,30 @@ const addUserInfo = async () => {
 //일반이용자 아이디 중복 확인 (김경환 2060327)
 const message = ref("");
 
-// const idCheck = ref(false);
+const idCheck = ref(false);
 const isDuplicate = ref(false);
 
-// const checkUserId = async () => {
-//   if (!userInfo.id) {
-//     alert("아이디를 입력하세요");
-//     return;
-//   }
-//   try {
-//     let res = await fetch(`/api/user/checkid/${userInfo.id}`);
-//     let result = await res.json();
+const checkUserId = async () => {
+  if (!userInfo.id) {
+    alert("아이디를 입력하세요");
+    return;
+  }
+  try {
+    let res = await fetch(`/api/user/checkid/${userInfo.id}`);
+    let result = await res.json();
 
-//     idCheck.value = true;
-//     isDuplicate.value = result.duplicate;
+    idCheck.value = true;
+    isDuplicate.value = result.duplicate;
 
-//     if (result.duplicate) {
-//       message.value = "이미 사용중인 아이디입니다.";
-//     } else {
-//       message.value = "사용 가능한 아이디입니다.";
-//     }
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+    if (result.duplicate) {
+      message.value = "이미 사용중인 아이디입니다.";
+    } else {
+      message.value = "사용 가능한 아이디입니다.";
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 //비밀번호 확인(김경환 20260329)
 const passwordConfirm = ref("");
@@ -305,7 +305,7 @@ const searchInstitution = async () => {
     keyword: institutionSearch.keyword,
   }).toString();
 
-  const result = await fetch(`/api/user/institutions?${query}`, {
+  const result = await fetch(`/api/user/institution?${query}`, {
     method: "GET",
     credentials: "include",
   })
@@ -408,11 +408,11 @@ onBeforeUnmount(() => {
                     aria-label="Id"
                     v-model="userInfo.id"
                   />
-                  <!-- <argon-button
+                  <argon-button
                     class="mt-auto p-3 d-flex justify-content-center gap-3"
                     @click.prevent="checkUserId"
                     >중복확인</argon-button
-                  > -->
+                  >
                 </div>
                 <p
                   v-if="message"
