@@ -142,6 +142,16 @@
           <div class="header-right">
             <div class="nav-wrapper position-relative end-0">
               <ul class="p-1 bg-transparent nav nav-pills nav-fill flex-nowrap">
+                <!-- 회원가입 승인 -->
+                <li class="nav-item" v-if="userRole === ROLE.ADMIN">
+                  <button
+                    type="button"
+                    class="px-3 py-2 nav-link border-0 bg-transparent"
+                    @click="goApproval"
+                  >
+                    <span class="ms-1">회원가입 승인</span>
+                  </button>
+                </li>
                 <!-- My Page -->
                 <li class="nav-item" v-if="isLogin">
                   <button
@@ -370,6 +380,10 @@ const logout = async () => {
 onMounted(() => {
   getLoginUser();
 });
+
+const goApproval = () => {
+  router.push("/general/approval");
+};
 </script>
 
 <style scoped>
