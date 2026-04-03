@@ -120,43 +120,52 @@ onMounted(async () => {
 <template>
   <div class="container-fluid py-4">
     <RoleHeader />
-    <div class="row">
-      <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="mb-0">지원결과서 승인 / 반려</h5>
+
+    <div class="mt-4 px-2 px-md-3">
+      <h5 class="mt-4 mb-0">지원결과서 승인</h5>
+      <div
+        class="d-flex justify-content-end align-items-center flex-wrap gap-3 mb-4"
+      >
+        <div class="d-flex align-items-center gap-2 flex-wrap">
           <button
-            class="btn btn-outline-primary btn-sm mb-0"
+            class="search-action-btn btn btn-sm mb-0"
             @click="showSearchModal"
           >
             <i class="fas fa-search me-2"></i>상세 검색
           </button>
         </div>
+      </div>
 
-        <ApprovalResultCardList
-          :resultList="resultList"
-          @onApprove="handleApprove"
-          @onRejectClick="openRejectModal"
-        />
+      <div class="row">
+        <div class="col-12">
+          <ApprovalResultCardList
+            :resultList="resultList"
+            @onApprove="handleApprove"
+            @onRejectClick="openRejectModal"
+          />
+        </div>
       </div>
     </div>
   </div>
 
   <div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
+      <div class="modal-content border-0 shadow">
         <div class="modal-header">
-          <h5 class="modal-title">상세 검색</h5>
+          <h5 class="modal-title" id="searchModalLabel">상세 검색</h5>
           <button
             type="button"
             class="btn-close"
             data-bs-dismiss="modal"
+            aria-label="Close"
           ></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
             <label class="form-label text-sm font-weight-bold"
               >담당자 이름</label
-            ><input
+            >
+            <input
               type="text"
               class="form-control"
               v-model="searchFilters.managerName"
@@ -165,7 +174,8 @@ onMounted(async () => {
           <div class="mb-3">
             <label class="form-label text-sm font-weight-bold"
               >보호자 이름</label
-            ><input
+            >
+            <input
               type="text"
               class="form-control"
               v-model="searchFilters.guardianName"
@@ -174,7 +184,8 @@ onMounted(async () => {
           <div class="mb-3">
             <label class="form-label text-sm font-weight-bold"
               >지원대상자 이름</label
-            ><input
+            >
+            <input
               type="text"
               class="form-control"
               v-model="searchFilters.supportName"
@@ -203,7 +214,7 @@ onMounted(async () => {
 
   <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
+      <div class="modal-content border-0 shadow">
         <div class="modal-header">
           <h5 class="modal-title text-danger">지원결과서 반려</h5>
           <button
@@ -245,3 +256,24 @@ onMounted(async () => {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* 🌟 상세 검색 버튼 스타일 통일 */
+.search-action-btn {
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: all 0.2s ease;
+  background: #ffffff;
+  color: #344767;
+  border: 1px solid rgba(52, 71, 103, 0.18);
+}
+
+.search-action-btn:hover {
+  background: #344767;
+  color: #ffffff;
+  border-color: #344767;
+  transform: translateY(-1px);
+}
+</style>

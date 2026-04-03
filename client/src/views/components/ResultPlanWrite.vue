@@ -127,11 +127,14 @@ onMounted(async () => {
 <template>
   <div class="container-fluid py-4">
     <RoleHeader />
-    <div class="row">
+    <div class="mt-4 row">
       <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h5 class="mb-0">지원결과서 작성</h5>
-          <button class="btn btn-warning mb-0" @click="openPlanModal">
+          <button
+            class="btn btn-sm bg-gradient-primary mb-0"
+            @click="openPlanModal"
+          >
             <i class="fas fa-list me-2"></i>지원 계획서 목록 보기
           </button>
         </div>
@@ -140,12 +143,18 @@ onMounted(async () => {
           <div class="card-body p-4">
             <div
               v-if="!selectedPlan"
-              class="text-center py-5 bg-gray-100 border-radius-lg"
+              class="empty-state-card d-flex flex-column justify-content-center align-items-center text-center bg-gray-100 border-radius-lg"
             >
-              <i class="fas fa-file-signature fa-3x text-secondary mb-3"></i>
-              <h6 class="text-secondary mb-0">
+              <i
+                class="fas fa-file-signature text-secondary mb-3"
+                style="font-size: 4rem"
+              ></i>
+              <h5 class="text-secondary fw-bold mb-2">
                 우측 상단의 버튼을 눌러 작성할 지원계획서를 선택해주세요.
-              </h6>
+              </h5>
+              <p class="text-sm text-secondary mb-0">
+                선택하신 계획서의 내용을 바탕으로 결과서를 작성할 수 있습니다.
+              </p>
             </div>
 
             <div v-else>
@@ -371,3 +380,10 @@ onMounted(async () => {
     </div>
   </div>
 </template>
+<style scoped>
+/* 🌟 텅 빈 화면의 최소 높이를 크게 잡아서 페이지가 꽉 차 보이게 하는 마법 */
+.empty-state-card {
+  min-height: 60vh; /* 화면 높이의 60%만큼 최소 높이를 확보합니다. */
+  border: 2px dashed #dee2e6; /* 은은한 점선 테두리를 줍니다. */
+}
+</style>
