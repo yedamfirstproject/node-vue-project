@@ -5,29 +5,34 @@ export default [
     path: "/manager/result/write",
     name: "ManagerResultPlanWrite",
     component: () => import("../views/components/ResultPlanWrite.vue"),
+    meta: { hideNavbar: true },
   },
   // 담당자 - 본인 지원결과서 조회
   {
     path: "/manager/result/list",
     name: "ManagerResultList",
     component: () => import("../views/components/GeneralResultList.vue"),
+    meta: { hideNavbar: true },
   },
   // 관리자 - 기관 전체 지원결과서 조회
   {
     path: "/general/result/list",
     name: "GeneralResultList",
     component: () => import("../views/components/GeneralResultList.vue"),
+    meta: { hideNavbar: true },
   },
   // 담당자 - 반려된 본인 지원결과서 조회
   {
     path: "/manager/result/rejected",
     name: "ManagerResultRejected",
     component: () => import("../views/components/RejectedResultList.vue"),
+    meta: { hideNavbar: true },
   },
   // 관리자 - 기관 전체 반려된 지원결과서 조회
   {
     path: "/general/result/rejected",
     name: "GeneralResultRejected",
     component: () => import("../views/components/RejectedResultList.vue"),
+    meta: { hideNavbar: true },
   },
 ];
