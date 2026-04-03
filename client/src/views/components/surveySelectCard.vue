@@ -95,9 +95,12 @@
         </template>
 
         <div class="d-flex justify-content-center mt-5 mb-5">
-          <RouterLink to="/user" class="btn btn-dark px-6 shadow-sm"
-            >목록으로 돌아가기</RouterLink
+          <RouterLink
+            :to="{ name: 'userMain' }"
+            class="btn btn-dark px-6 shadow-sm"
           >
+            목록으로 돌아가기
+          </RouterLink>
         </div>
       </div>
     </div>
@@ -106,10 +109,9 @@
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
 const route = useRoute();
-const router = useRouter();
 const surveyData = ref([]); // 서버에서 받아온 문항 데이터
 const userName = ref("");
 const createdAt = ref("");
@@ -128,29 +130,33 @@ const getTitleByCode = (code) => {
 };
 //데이터 대 -> 중 구조로 변환
 const groupedSections = computed(() => {
+  if (!surveyData.value.length) return []; // 데이터 없으면 빈 배열
+
   const sections = [];
 
   surveyData.value.forEach((item) => {
     const currentTitleInfo = getTitleByCode(item.titleCode);
 
-    const parentCode = currentTitleInfo?.parentCode || item.titleCode;
-    const parentInfo = getTitleByCode(parentCode);
+    const parentCode = currentTitleInfo?.parentCode || "ETC";
+    const parentName = currentTitleInfo?.parentCode
+      ? getTitleByCode(currentTitleInfo.parentCode)?.title
+      : "기타 항목";
 
-    //대분류
+    // 1. 대분류
     let section = sections.find((s) => s.titleCode === parentCode);
     if (!section) {
       section = {
         titleCode: parentCode,
-        titleName: parentInfo ? parentInfo.title : "기타 항목",
+        titleName: parentName || "기타",
         subs: [],
       };
       sections.push(section);
     }
 
-    //중분류
+    // 2. 중분류
     const subTitleName = currentTitleInfo
       ? currentTitleInfo.title
-      : "기본 항목";
+      : "상세 항목";
     let sub = section.subs.find((s) => s.subTitle === subTitleName);
     if (!sub) {
       sub = {
@@ -161,9 +167,11 @@ const groupedSections = computed(() => {
       section.subs.push(sub);
     }
 
+    // 3. 문항 추가
     sub.questions.push(item);
   });
 
+  console.log("최종 그룹화된 데이터:", sections);
   return sections;
 });
 
@@ -184,26 +192,29 @@ const fetchTitles = async () => {
 //조사지 건별조회 데이터 가져오기
 const getSurveyDetail = async (id) => {
   try {
-    const response = await fetch(`/api/survey/surveySelect/${id}`, {
-      credentials: "include",
-    });
+    const response = await fetch(
+      `http://localhost:3000/survey/surveySelect/${id}`,
+      {
+        credentials: "include",
+      },
+    );
 
-    if (response.status === 403) {
-      alert("권한이 없습니다.");
-      router.push("/user");
+    if (!response.ok) {
+      if (response.status === 403) alert("권.한.없.음");
       return;
     }
 
     const data = await response.json();
-    if (!Array.isArray(data)) {
-      console.error("서버 응답이 배열이 아닙니다:", data);
-      surveyData.value = [];
-      return;
-    }
+    console.log("조회된 원본 데이터:", data);
 
-    if (data.length > 0) {
-      userName.value = data[0].userName;
+    if (data && data.length > 0) {
+      surveyData.value = data;
+
+      userName.value = data[0].userName || "성함 없음";
       createdAt.value = data[0].created_at;
+    } else {
+      console.warn("데이터가 비어있습니다.");
+      surveyData.value = [];
     }
   } catch (error) {
     console.error("데이터 로드 실패:", error);
@@ -234,10 +245,9 @@ const fetchAnswers = async (id) => {
 };
 
 onMounted(async () => {
-  await fetchTitles();
-
   const id = route.params.id;
   if (id) {
+    await fetchTitles();
     await getSurveyDetail(id);
     await fetchAnswers(id);
   }

@@ -1,7 +1,11 @@
 <template>
-  <RoleHeader />
-  <Sidebar />
-  <SurveyCard />
+  <div class="survey-page">
+    <Sidebar />
+    <div class="main-content">
+      <RoleHeader />
+      <SurveyCard />
+    </div>
+  </div>
 </template>
 
 <script setup>

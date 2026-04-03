@@ -139,14 +139,23 @@ const items = async (Ver_Id) => {
 };
 
 //상세조회
-const surveyDetail = async (surveyId, userId) => {
+// database/mappers/survey_mapper.js
+const surveyDetail = async (p) => {
   let conn = null;
   try {
     conn = await pool.getConnection();
-    let rows = await conn.query(surveySql.surveyDetail, [surveyId, userId]);
+    let rows = await conn.query(surveySql.surveyDetail, [
+      p.surveyId,
+      p.isAdmin ? 1 : null, // 시스템관리자면 1, 아니면 null
+      p.institutionId, // 기관관리자용
+      p.userId, // 담당자/사용자용 (I_UserId1)
+      p.userId, // 담당자/사용자용 (I_UserId2)
+      p.userId, // 일반 사용자 본인용 (G_UserId)
+    ]);
     return rows;
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    throw err;
   } finally {
     if (conn) conn.release();
   }
