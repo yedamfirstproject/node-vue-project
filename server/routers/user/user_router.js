@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const uploadUser = require("../../middlewares/uploadFile_SignIn.js");
+const downloadFileUser = require("../../middlewares/downloadFile_User.js");
 
 const userService = require("../../services/user_service.js");
 
@@ -22,13 +23,46 @@ router.get(`/test`, async (req, res) => {
 });
 
 //일반이용자 회원가입<김경환, 응답결과 전달>
-router.post(`/users`, async (req, res) => {
-  let target = req.body;
-  console.log(target);
-  let result = await userService.createUser(target);
-  console.log(result);
-  res.send(result);
-});
+// router.post(`/users`, async (req, res) => {
+//   let target = req.body;
+//   console.log(target);
+//   let result = await userService.createUser(target);
+//   console.log(result);
+//   res.send(result);
+// });
+//일반사용자 회원가입 파일 등록 포함 수정 고동현
+router.post(
+  `/users`,
+  uploadUser.fields([
+    { name: "document1", maxCount: 1 },
+    { name: "document2", maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      let target = req.body;
+      const files = req.files || {};
+
+      target.document1 = files.document1?.[0]?.filename || null;
+      target.document2 = files.document2?.[0]?.filename || null;
+
+      console.log("req.body :", target);
+      console.log("req.files :", files);
+
+      let result = await userService.createUser(target);
+      console.log(result);
+      res.send(result);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send({
+        status: "Failed",
+        message: "회원가입 중 파일 업로드 오류",
+      });
+    }
+  },
+);
+
+//회원가입 파일 다운로드 라우트
+router.get("/download/user/:fileName", downloadFileUser);
 
 //기관이용자 회원가입<김경환, 응답결과 전달>
 router.post(`/instiUsers`, async (req, res) => {
