@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="collapse navbar-collapse w-auto h-auto h-100 sidebar-layout-container"
-    id="sidenav-collapse-main"
-  >
+  <div class="sidebar-layout-container">
     <ul class="navbar-nav w-100">
       <li class="nav-item ps-4 pt-4 pe-3">
         <h5 class="font-weight-bolder text-dark mb-4">지원자 정보 입력</h5>
@@ -228,6 +225,43 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.survey-page {
+  position: relative;
+}
+
+.sidebar-layout-container {
+  display: flex; /* 또는 grid */
+}
+
+.sidebar {
+  position: fixed; /* 화면 고정 */
+  width: 250px;
+  height: 100vh;
+  z-index: 100; /* main-content보다 위로 올라옴 */
+}
+
+.main-content {
+  margin-left: 250px; /* 사이드바 공간 확보 */
+}
+
+/* 사이드바는 고정 */
+.sidebar-layout-container {
+  position: fixed;
+  top: 85px;
+  left: 0;
+  width: 260px;
+  height: calc(100vh - 85px);
+  z-index: 2000;
+  background-color: #fff;
+  border-right: 1px solid #e9ecef;
+  overflow-y: auto;
+}
+
+/* main-content는 사이드바만큼 밀기 */
+.main-content {
+  margin-left: 260px; /* 사이드바 너비 */
+  padding: 2rem;
+}
 /* 1. 사이드바 위치 및 레이아웃 설정 */
 .sidebar-layout-container {
   position: fixed !important;
@@ -235,7 +269,7 @@ onMounted(() => {
   left: 0 !important;
   width: 260px !important;
   height: calc(100vh - 85px) !important;
-  z-index: 1000 !important;
+  z-index: 2000 !important; /* 다른 레이어 위로 올림 */
   background-color: #ffffff !important;
   border-right: 1px solid #e9ecef !important;
   overflow-y: auto !important;
@@ -253,7 +287,7 @@ onMounted(() => {
 .custom-input {
   display: block !important;
   width: 100% !important;
-  background-color: #f8f9fa !important; /* 읽기 전용 느낌을 위해 약간의 회색조 추가 */
+  background-color: #f8f9fa !important; /* 읽기 전용 느낌 */
   border: 1px solid #d2d6da !important;
   border-radius: 8px !important;
   padding: 0.5rem 0.75rem !important;
@@ -291,16 +325,16 @@ onMounted(() => {
   font-size: 0.75rem !important;
 }
 
-/* 5. 메인 콘텐츠와의 간격 조정 (부모 컴포넌트 영향) */
+/* 5. 메인 콘텐츠와의 간격 조정 */
 :deep(.content-area) {
-  margin-left: 260px !important;
+  margin-left: 260px !important; /* 사이드바 공간 확보 */
   padding: 2rem !important;
 }
 
-/* 6. 반응형 대응 (필요 시) */
-@media (max-width: 1199.98px) {
+/* 6. 반응형 대응 제거: 항상 보이도록 처리 */
+/* @media (max-width: 1199.98px) {
   .sidebar-layout-container {
-    display: none !important; /* 모바일/태블릿에서는 기본적으로 숨김 처리 */
+    display: none !important;
   }
-}
+} */
 </style>

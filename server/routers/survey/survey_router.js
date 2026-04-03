@@ -2,6 +2,10 @@
 const express = require("express");
 const router = express.Router();
 const surveyService = require("../../services/survey_service");
+const {
+  requireInstUser,
+  requireInstRole,
+} = require("../../middlewares/instiUserMiddleware.js");
 
 //사이드바-남/여 공통코드
 router.get("/gender", async (req, res) => {
@@ -99,38 +103,42 @@ router.get("/items/:Ver_Id", async (req, res) => {
 //건별조회
 router.get("/surveySelect/:id", async (req, res) => {
   try {
-    const userRole = req.session.role;
-    const userId = req.session.userId;
     const surveyId = req.params.id;
+    let userRole, userId, institutionId;
 
-    let result;
-
-    //권한
-    if (userRole === "a001") {
-      // 시스템 관리자: 모든 설문 조회 가능
-      result = await surveyService.surveyDetail(surveyId);
-    } else if (userRole === "a002" || userRole === "a003") {
-      // 기관 관리자 / 담당자: 소속 기관 설문 조회 가능
-      result = await surveyService.surveyDetail(
-        surveyId,
-        null,
-        req.session.institutionId,
-      );
-    } else if (userRole === "a004") {
-      // 일반 사용자: 본인 설문만 조회 가능
-      result = await surveyService.surveyDetail(surveyId, userId);
+    // 1. 세션 확인 및 정보 추출
+    if (req.session.user) {
+      userRole = req.session.user.role;
+      userId = req.session.user.G_UserId;
+      institutionId = req.session.user.institution_id;
+    } else if (req.session.loginInstUser) {
+      userRole = req.session.loginInstUser.role;
+      userId = req.session.loginInstUser.I_UserId;
+      institutionId = req.session.loginInstUser.institution_id;
     } else {
-      return res.status(403).json({ message: "권한이 없습니다." });
+      return res.status(401).json({ message: "로그인이 필요합니다." });
     }
+    console.log("세션 user:", req.session.user);
+    console.log("세션 loginInstUser:", req.session.loginInstUser);
+
+    // 2. 서비스 호출 (권한 정보를 객체로 묶어서 전달하면 관리가 편합니다)
+    const result = await surveyService.surveyDetail({
+      surveyId,
+      userRole,
+      userId,
+      institutionId,
+    });
 
     if (!result || result.length === 0) {
-      return res.status(403).json({ message: "권한이 없습니다." });
+      return res
+        .status(403)
+        .json({ message: "조회 권한이 없거나 존재하지 않는 데이터입니다." });
     }
 
     res.json(result);
   } catch (err) {
     console.error("건별조회 실패:", err);
-    res.status(500).json;
+    res.status(500).json({ message: "서버 오류" });
   }
 });
 
