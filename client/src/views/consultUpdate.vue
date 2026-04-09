@@ -45,11 +45,7 @@
 
           <div class="info-item">
             <label>상담일자</label>
-            <input
-              type="date"
-              v-model="form.counsult_date"
-              class="form-input"
-            />
+            <input type="date" v-model="form.write_date" class="form-input" />
           </div>
           <div class="info-item">
             <label>상담 시간 (시작/종료)</label>
@@ -161,7 +157,7 @@ const majorMap = {
 
 const form = ref({
   counsult_id: consultId,
-  counsult_date: "",
+  write_date: "",
   counsult_startTime: "",
   counsult_endTime: "",
   counsult_method: "",
@@ -210,9 +206,7 @@ const fetchDetail = async () => {
       form.value = {
         ...data,
         counsult_id: consultId,
-        counsult_date: data.counsult_date
-          ? data.counsult_date.slice(0, 10)
-          : "",
+        write_date: data.write_date ? data.write_date.slice(0, 10) : "",
         counsult_startTime: data.counsult_startTime
           ? data.counsult_startTime.slice(0, 5)
           : "",
@@ -246,7 +240,7 @@ const updateConsult = async () => {
   if (!confirm("수정하시겠습니까?")) return;
   try {
     const updateData = {
-      counsult_date: form.value.counsult_date,
+      write_date: form.value.write_date,
       counsult_startTime: form.value.counsult_startTime,
       counsult_endTime: form.value.counsult_endTime,
       counsult_method: form.value.counsult_method,
