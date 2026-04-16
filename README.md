@@ -25,3 +25,4 @@
  - EX) 홍길동 / 아이디 중복 확인 - 회원가입 / 20260325
 
 ## 개발 환경
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/a08fd728-96a6-488f-92f8-ed8ee8133500" />
